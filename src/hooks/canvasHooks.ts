@@ -1,18 +1,17 @@
-import { MutableRefObject } from 'react';
 import { setCanvasUpdating } from '../app/canvasSlice';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import {canvasRefs} from '../Common/InjectedVars';
 
 export function useCanvas(index: number): [null | HTMLCanvasElement,
-    (canvasRef: MutableRefObject<HTMLCanvasElement>, index: number)=>void] 
+    (canvasRef: HTMLCanvasElement)=>void] 
 {
     const dispatch = useAppDispatch();
     const shouldComponentUpdate = useAppSelector(state => state.canvasSlice.shouldComponentUpdate); 
     const fireUpdate = (x: boolean)=>dispatch(setCanvasUpdating(x));
 
-    const updateCanvas = (canvasRef: MutableRefObject<HTMLCanvasElement>, index: number) => 
+    const updateCanvas = (canvasRef: HTMLCanvasElement) => 
     {
-        canvasRefs.set(index, canvasRef.current);
+        canvasRefs.set(index, canvasRef);
         fireUpdate(!shouldComponentUpdate);
     }  
 
