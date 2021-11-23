@@ -1,0 +1,1 @@
+export const canvasRefs: Map<number, HTMLCanvasElement> = new Map();
