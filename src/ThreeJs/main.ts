@@ -79,15 +79,14 @@ export function init(canvas: HTMLCanvasElement = document.createElement('canvas'
     const bulbs = generateLightBulbs(0.5, 10, 10, scene as Scene);
     
     const highlightSource = new PointLight( 0xffffff, 1, 100);
-    highlightSource.position.set(0, 0,  90);
+    highlightSource.position.set(0, 0,  25);
     scene.add(highlightSource);
 
     const box = new THREE.BoxGeometry(10, 10, 1, 16);
-    const matKnot = new THREE.MeshStandardMaterial( 
+    const matKnot = new THREE.MeshPhongMaterial( 
         { 
             color: 0xffffff, 
-            roughness: 1, 
-            metalness: 0, 
+            combine: THREE.MixOperation,
         } );
 
     const meshKnot = new THREE.Mesh( box, matKnot );
