@@ -1,13 +1,10 @@
-import { ColorRepresentation, Mesh, MeshPhongMaterial,  NoBlending, Object3D, PointLight, Scene, SphereGeometry, SubtractiveBlending } from "three";
+import {  Mesh, MeshPhongMaterial,  NoBlending, Object3D, PointLight, Scene, SphereGeometry, SpotLight, SubtractiveBlending } from "three";
 import { generateUUID } from "three/src/math/MathUtils";
 
 export default class Lightbulb {
-    private lightSource: PointLight;
     private bulb: Mesh;
-    constructor(color: ColorRepresentation){
-        this.lightSource = new PointLight( color, 1, 4,2 );
-
-
+    private color: number;
+    constructor(color: number){
         const bulbGeom = new SphereGeometry(0.5, 20, 20, 16);
         const bulbMaterial = new MeshPhongMaterial( 
             { 
@@ -18,16 +15,18 @@ export default class Lightbulb {
             } );
         this.bulb = new Mesh( bulbGeom, bulbMaterial );
         this.bulb.name = `bulb - ${generateUUID()}`;
+        this.color = color;
     }
 
     public AddToScene(scene: Object3D<Event> | Scene  ): void {
         scene.add(this.bulb)
-        scene.add( this.lightSource );
     }
 
     public Move(x:number, y:number, z:number): void {
-        this.lightSource.position.set(x, y, z - 2.5);
         this.bulb.position.set(x, y, z);
     }
 
+    public getColor(): number[] {
+        return [(this.color&0xff0000)/0xff0000, (this.color&0x00ff00)/0x00ff00, (this.color&0x0000ff)/0x0000ff];
+    }
 }

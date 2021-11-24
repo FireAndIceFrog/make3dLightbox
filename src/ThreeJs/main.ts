@@ -6,6 +6,8 @@ import { Object3D, PointLight, Scene } from 'three';
 import Lightbulb from './lightbulb';
 import { store } from '../app/store';
 import { SetSelectedElement } from '../app/canvasSlice';
+import { ColouredPlane } from './ColouredPlane';
+import LightBulbFactory from './LightBulbFactory';
 
 export let renderer: THREE.WebGLRenderer;
 export let scene: THREE.Object3D<THREE.Event> | THREE.Scene;
@@ -16,24 +18,7 @@ export let intersectedObject: Object3D<THREE.Event> | null = null;
 
 const mouse = new THREE.Vector2();
 
-export function generateLightBulbs(z:number, row:number, cols:number, scene: Object3D<Event> | Scene)
-{
-    const lightbulbs: Lightbulb[][] = [];
-    for (let i = 0; i < row; i++)
-    {
-        const rowData = [];
-        let color =  i % 3 === 0 ? 0xff0000 : i % 2 === 0 ? 0x00ff00 : 0x0000ff;
-        for (let j = 0; j < cols; j++)
-        {
-            const lightbulb = new Lightbulb(color);
-            lightbulb.AddToScene(scene);
-            lightbulb.Move(0.5+i-Math.floor(row/2), j+0.5, z);
-            rowData.push(lightbulb);
-        }
-        lightbulbs.push(rowData);
-    }
-    return lightbulbs;
-}
+
 
 function onMouseClick( event: MouseEvent ) {
     const dispatch = store.dispatch;
@@ -55,6 +40,7 @@ function onMouseClick( event: MouseEvent ) {
 	for ( let i = 0; i < intersects.length; i ++ ) {
         intersectedObject = intersects[ 0 ].object;
 	}
+
     if(intersectedObject)
     {
         dispatch(SetSelectedElement(true));
@@ -76,22 +62,33 @@ export function init(canvas: HTMLCanvasElement = document.createElement('canvas'
 
     RectAreaLightUniformsLib.init();
 
-    const bulbs = generateLightBulbs(0.5, 10, 10, scene as Scene);
+    const lightBulbFactory = new LightBulbFactory();
+
+    lightBulbFactory.generateLightBulbs(0.5, 10, 10, scene as Scene);
     
     const highlightSource = new PointLight( 0xffffff, 1, 100);
     highlightSource.position.set(0, 0,  25);
     scene.add(highlightSource);
 
-    const box = new THREE.BoxGeometry(10, 10, 1, 16);
+    const light = new THREE.AmbientLight( 0xffffff,1 ); // soft white light
+    scene.add( light );
+
+    // setGradient(box);
     const matKnot = new THREE.MeshPhongMaterial( 
         { 
-            color: 0xffffff, 
-            combine: THREE.MixOperation,
+            side: THREE.DoubleSide,
+            vertexColors: true
         } );
+    
+    
+    const lightBulbColors = lightBulbFactory.generateColors();
+    const numBulbs = lightBulbFactory.cols();
+    const geometry = new ColouredPlane(11, numBulbs);
+    geometry.render(lightBulbColors)
 
-    const meshKnot = new THREE.Mesh( box, matKnot );
+    const meshKnot = new THREE.Mesh( geometry.render(), matKnot );
     meshKnot.name = 'meshKnot';
-    meshKnot.position.set( 0, 5, 0 );
+    meshKnot.position.set( 0.5, 5.5, 0 );
     scene.add( meshKnot );
 
     const controls = new OrbitControls( camera, renderer.domElement );
