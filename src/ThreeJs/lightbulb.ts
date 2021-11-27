@@ -1,4 +1,4 @@
-import {  Mesh, MeshPhongMaterial,  NoBlending, Object3D, PointLight, Scene, SphereGeometry, SpotLight, SubtractiveBlending } from "three";
+import {  Color, Mesh, MeshPhongMaterial,  NoBlending, Object3D, PointLight, Scene, SphereGeometry, SpotLight, SubtractiveBlending } from "three";
 import { generateUUID } from "three/src/math/MathUtils";
 
 export default class Lightbulb {
@@ -28,5 +28,14 @@ export default class Lightbulb {
 
     public getColor(): number[] {
         return [(this.color&0xff0000)/0xff0000, (this.color&0x00ff00)/0x00ff00, (this.color&0x0000ff)/0x0000ff];
+    }
+
+    public setColor(color: Color) {
+        this.color = color.getHex();
+        (this.bulb.material as MeshPhongMaterial).color = color
+    }
+
+    public getName() {
+        return this.bulb.name;
     }
 }

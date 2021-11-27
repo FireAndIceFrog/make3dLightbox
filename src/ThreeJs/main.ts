@@ -2,13 +2,12 @@ import * as THREE from 'three';
 import Stats from 'three/examples/jsm/libs/stats.module';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
-import { Object3D, PointLight, Scene } from 'three';
+import { Color, Mesh, Object3D, PointLight, Scene } from 'three';
 import Lightbulb from './lightbulb';
 import { store } from '../app/store';
 import { SetSelectedElement } from '../app/canvasSlice';
 import { ColouredPlane } from './ColouredPlane';
 import LightBulbFactory from './LightBulbFactory';
-
 export let renderer: THREE.WebGLRenderer;
 export let scene: THREE.Object3D<THREE.Event> | THREE.Scene;
 export let camera: THREE.PerspectiveCamera;
@@ -16,11 +15,37 @@ export const raycaster = new THREE.Raycaster();
 export let stats: { dom: any; update: () => void; };
 export let intersectedObject: Object3D<THREE.Event> | null = null;
 
+const lightBulbFactory = new LightBulbFactory();
+let colouredPlaneGeom:ColouredPlane
+let colouredPlaneMesh: Mesh
+
 const mouse = new THREE.Vector2();
 
+export function SetSelectedColor (colorRep: any) {
+    if(intersectedObject && (intersectedObject as any)?.material?.color){
+        const name = intersectedObject?.name as string;
+        const colour = (intersectedObject as any)?.material?.color as  { r:number, b:number, g: number, set: (color: number) => void };
+        const col = new Color(colorRep)
 
+        const bulb = lightBulbFactory.findBulb(name);
+        bulb?.setColor(col)
+        const matKnot = new THREE.MeshPhongMaterial( 
+                { 
+                    side: THREE.DoubleSide,
+                    vertexColors: true
+                } );
+        const lightBulbColors = lightBulbFactory.generateColors();
+        colouredPlaneMesh.removeFromParent()
+        const geom = colouredPlaneGeom.rerender(lightBulbColors)
+        colouredPlaneMesh = new THREE.Mesh( geom, matKnot );
+        colouredPlaneMesh.name = 'meshKnot';
+        colouredPlaneMesh.position.set( 0.5, 5.5, 0 );
+        scene.add( colouredPlaneMesh );
+        renderer.render( scene, camera );
+    }
+}
 
-function onMouseClick( event: MouseEvent ) {
+export const onMouseClick: React.MouseEventHandler<HTMLCanvasElement> = ( event ) => {
     const dispatch = store.dispatch;
     if(intersectedObject){
         dispatch(SetSelectedElement(false));
@@ -46,7 +71,6 @@ function onMouseClick( event: MouseEvent ) {
         dispatch(SetSelectedElement(true));
     }
 }
-document.addEventListener( 'mousedown', onMouseClick )
 
 export function init(canvas: HTMLCanvasElement = document.createElement('canvas')) {
     renderer = new THREE.WebGLRenderer( { antialias: true, canvas: canvas } );
@@ -61,8 +85,6 @@ export function init(canvas: HTMLCanvasElement = document.createElement('canvas'
     scene = new Scene();
 
     RectAreaLightUniformsLib.init();
-
-    const lightBulbFactory = new LightBulbFactory();
 
     lightBulbFactory.generateLightBulbs(0.5, 10, 10, scene as Scene);
     
@@ -80,19 +102,17 @@ export function init(canvas: HTMLCanvasElement = document.createElement('canvas'
             vertexColors: true
         } );
     
-    
     const lightBulbColors = lightBulbFactory.generateColors();
     const numBulbs = lightBulbFactory.cols();
-    const geometry = new ColouredPlane(11, numBulbs);
-    geometry.render(lightBulbColors)
+    colouredPlaneGeom = new ColouredPlane(11, numBulbs);
 
-    const meshKnot = new THREE.Mesh( geometry.render(), matKnot );
-    meshKnot.name = 'meshKnot';
-    meshKnot.position.set( 0.5, 5.5, 0 );
-    scene.add( meshKnot );
+    colouredPlaneMesh = new THREE.Mesh( colouredPlaneGeom.render(lightBulbColors), matKnot );
+    colouredPlaneMesh.name = 'meshKnot';
+    colouredPlaneMesh.position.set( 0.5, 5.5, 0 );
+    scene.add( colouredPlaneMesh );
 
     const controls = new OrbitControls( camera, renderer.domElement );
-    controls.target.copy( meshKnot.position );
+    controls.target.copy( colouredPlaneMesh.position );
     controls.update();
 
     window.addEventListener( 'resize', onWindowResize );

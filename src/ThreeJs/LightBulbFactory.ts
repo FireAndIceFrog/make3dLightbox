@@ -12,11 +12,12 @@ export default class LightBulbFactory {
         for (let i = 0; i < row; i++)
         {
             const rowData = [];
-            //let color =  i % 3 === 0 ? 0xff0000 : i % 2 === 0 ? 0x00ff00 : 0x0000ff;
+            // let color =  Math.random() * i % 3 === 0 ? 0xff0000 : i % 2 === 0 ? 0x00ff00 : 0x0000ff;
+            let color = (Math.random() * (i* 0x111111 >> i)) % 0xffffff
             for (let j = 0; j < cols; j++)
             {
                 
-                let color = (Math.random()*0xffffff)&0xffffff
+                // let color = (Math.random()*0xffffff)&0xffffff
                 const lightbulb = new Lightbulb(color);
                 lightbulb.AddToScene(scene);
                 lightbulb.Move(0.5+i-Math.floor(row/2), j+0.5, z);
@@ -53,5 +54,10 @@ export default class LightBulbFactory {
             }
         }
         return colors;
+    }
+
+    findBulb(name:string) {
+        const flatBulbs = this.bulbs.flat()
+        return flatBulbs.find(x=>x.getName() == name)
     }
 }

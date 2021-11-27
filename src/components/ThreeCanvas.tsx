@@ -1,7 +1,7 @@
 
 import { useEffect, useRef } from 'react';
 import { useAppSelector } from '../app/hooks'
-import {init, renderer, scene} from '../ThreeJs/main'
+import {init, onMouseClick, renderer, scene} from '../ThreeJs/main'
 import * as THREE from 'three';
 import { Scene } from 'three';
 
@@ -17,5 +17,6 @@ export default function ThreeCanvas() {
             }
         }
     },[canvasRef])
-    return <canvas ref = {canvasRef}/>
+    
+    return <canvas ref = {canvasRef} onMouseDown ={onMouseClick}/>
 }
