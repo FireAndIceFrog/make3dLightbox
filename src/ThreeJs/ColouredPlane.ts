@@ -99,4 +99,10 @@ export class ColouredPlane {
         this.geometry.rotateZ(Math.PI/2);
         return this.geometry;
     }
+
+    updateColors(colours: number[]) {
+        this.colors = colours;
+        this.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( this.colors, 3 ) );
+        return this.geometry
+    }
 }

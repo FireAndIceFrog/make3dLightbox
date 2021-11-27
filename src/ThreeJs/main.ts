@@ -29,19 +29,9 @@ export function SetSelectedColor (colorRep: any) {
 
         const bulb = lightBulbFactory.findBulb(name);
         bulb?.setColor(col)
-        const matKnot = new THREE.MeshPhongMaterial( 
-                { 
-                    side: THREE.DoubleSide,
-                    vertexColors: true
-                } );
+
         const lightBulbColors = lightBulbFactory.generateColors();
-        colouredPlaneMesh.removeFromParent()
-        const geom = colouredPlaneGeom.rerender(lightBulbColors)
-        colouredPlaneMesh = new THREE.Mesh( geom, matKnot );
-        colouredPlaneMesh.name = 'meshKnot';
-        colouredPlaneMesh.position.set( 0.5, 5.5, 0 );
-        scene.add( colouredPlaneMesh );
-        renderer.render( scene, camera );
+        colouredPlaneMesh.geometry =  colouredPlaneGeom.updateColors(lightBulbColors)
     }
 }
 
