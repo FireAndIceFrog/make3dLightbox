@@ -1,0 +1,23 @@
+.color-brush{
+    &__icon {
+        border-radius: 50px;
+        position: absolute;
+        top: 90vh;
+        right: 5vw;
+        display: flex;
+        width: 5vw;
+        height: 5vh;
+        background-color: azure;
+        color: black;
+        align-content: center;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 3px 12px rgba(255, 255, 255, 0.452), 0 3px 12px rgba(255, 255, 255, 0.452);
+        cursor: pointer;
+
+        &:hover {
+            background-color: rgb(189, 189, 189);
+            color: rgb(44, 44, 44);
+        }
+    }
+}

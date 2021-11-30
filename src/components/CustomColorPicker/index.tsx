@@ -13,7 +13,7 @@ function stringToColour(hex: number ) {
 export default function CustomColorPickerContainer() {
     const selectedColor = useAppSelector(state=> state.canvasSlice.selectedColor);
     const isSelected = useAppSelector(state=> state.canvasSlice.elementHasBeenSelected);
-
-    if(isSelected) return <Picker selectedColor={stringToColour(selectedColor as number)} setSelectedColorCallback={SetSelectedColor} ></Picker>
+    const isBrushing = useAppSelector(state=>state.brushSlice.isBrushing)
+    if(isSelected && !isBrushing) return <Picker selectedColor={stringToColour(selectedColor as number)} setSelectedColorCallback={SetSelectedColor} ></Picker>
     else return <div></div>
   }

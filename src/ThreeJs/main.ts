@@ -13,6 +13,11 @@ export let camera: THREE.PerspectiveCamera;
 export const raycaster = new THREE.Raycaster();
 export let intersectedObject: Object3D<THREE.Event> | null = null;
 export let mouseOrbitControls: OrbitControls
+export let ready: boolean
+
+export function EnableControls(status: boolean) { 
+    mouseOrbitControls.enabled = status
+}
 
 const lightBulbFactory = new LightBulbFactory();
 let colouredPlaneGeom:ColouredPlane
@@ -106,6 +111,13 @@ export function init(canvas: HTMLCanvasElement = document.createElement('canvas'
 
     window.addEventListener( 'resize', onWindowResize );
 }
+
+store.subscribe(()=>{
+    const state = store.getState();
+    if(state.brushSlice.isBrushing === mouseOrbitControls.enabled) {
+        mouseOrbitControls.enabled = !state.brushSlice.isBrushing;
+    }
+})
 
 export function setThreeCanvasSize(width: number, height: number) 
 {
