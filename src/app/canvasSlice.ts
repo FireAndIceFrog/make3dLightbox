@@ -1,11 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { Color } from "three";
-import { intersectedObject } from "../ThreeJs/main";
+import { intersectedObject, setThreeCanvasSize } from "../ThreeJs/main";
 
 interface ICanvasSliceState {
     shouldComponentUpdate: boolean, // boolean dictates whether to update the canvas (changing this updates canvas)
     elementHasBeenSelected: boolean,
-    selectedColor: number | null
+    selectedColor: number | null,
+    width: number,
+    height: number
 }
 
 const canvasSlice = createSlice(
@@ -28,10 +30,15 @@ const canvasSlice = createSlice(
                 } else {
                     state.selectedColor = null
                 }
+            },
+            setCanvasSize: (state, action: {payload: {width: number, height: number}})=>{
+                state.width = action.payload.width;
+                state.height = action.payload.height;
+                setThreeCanvasSize(action.payload.width, action.payload.height)
             }
         },
     }
 )
 
-export const {  setCanvasUpdating, SetSelectedElement } = canvasSlice.actions;
+export const {  setCanvasUpdating, SetSelectedElement, setCanvasSize } = canvasSlice.actions;
 export const canvasSliceReducer = canvasSlice.reducer;

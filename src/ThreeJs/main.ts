@@ -1,18 +1,16 @@
 import * as THREE from 'three';
-import Stats from 'three/examples/jsm/libs/stats.module';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
 import { Color, Mesh, Object3D, PointLight, Scene } from 'three';
 import Lightbulb from './lightbulb';
 import { store } from '../app/store';
-import { SetSelectedElement } from '../app/canvasSlice';
+import { setCanvasSize, SetSelectedElement } from '../app/canvasSlice';
 import { ColouredPlane } from './ColouredPlane';
 import LightBulbFactory from './LightBulbFactory';
 export let renderer: THREE.WebGLRenderer;
 export let scene: THREE.Object3D<THREE.Event> | THREE.Scene;
 export let camera: THREE.PerspectiveCamera;
 export const raycaster = new THREE.Raycaster();
-export let stats: { dom: any; update: () => void; };
 export let intersectedObject: Object3D<THREE.Event> | null = null;
 
 const lightBulbFactory = new LightBulbFactory();
@@ -107,16 +105,17 @@ export function init(canvas: HTMLCanvasElement = document.createElement('canvas'
 
     window.addEventListener( 'resize', onWindowResize );
 
-    stats = Stats();
-    document.body.appendChild( stats.dom );
+}
+
+export function setThreeCanvasSize(width: number, height: number) 
+{
+    renderer.setSize( width,height );
+    camera.aspect = ( width / height );
+    camera.updateProjectionMatrix();
 }
 
 function onWindowResize() {
-
-    renderer.setSize( window.innerWidth, window.innerHeight );
-    camera.aspect = ( window.innerWidth / window.innerHeight );
-    camera.updateProjectionMatrix();
-
+    store.dispatch(setCanvasSize({width: window.innerWidth, height: window.innerHeight}));
 }
 
 function animation( time: number ) {
@@ -126,5 +125,4 @@ function animation( time: number ) {
 
     renderer.render( scene, camera );
 
-    stats.update();
 }

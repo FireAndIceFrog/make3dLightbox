@@ -1,13 +1,11 @@
-import CustomColorPicker from "./components/CustomColorPicker";
-import Selected3DElement from "./components/SelectedElement";
+import CustomColorPicker from "./components/CustomColorPicker/index";
 import ThreeCanvas from "./components/ThreeCanvas";
 
 function App() {
   return (
     <div className="App">
-      <ThreeCanvas />
       <CustomColorPicker/>
-      <Selected3DElement/>
+      <ThreeCanvas />
     </div>
   );
 }
