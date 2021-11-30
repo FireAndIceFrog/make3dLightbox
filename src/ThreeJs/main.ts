@@ -12,6 +12,7 @@ export let scene: THREE.Object3D<THREE.Event> | THREE.Scene;
 export let camera: THREE.PerspectiveCamera;
 export const raycaster = new THREE.Raycaster();
 export let intersectedObject: Object3D<THREE.Event> | null = null;
+export let mouseOrbitControls: OrbitControls
 
 const lightBulbFactory = new LightBulbFactory();
 let colouredPlaneGeom:ColouredPlane
@@ -99,12 +100,11 @@ export function init(canvas: HTMLCanvasElement = document.createElement('canvas'
     colouredPlaneMesh.position.set( 0.5, 5.5, 0 );
     scene.add( colouredPlaneMesh );
 
-    const controls = new OrbitControls( camera, renderer.domElement );
-    controls.target.copy( colouredPlaneMesh.position );
-    controls.update();
+    mouseOrbitControls = new OrbitControls( camera, renderer.domElement );
+    mouseOrbitControls.target.copy( colouredPlaneMesh.position );
+    mouseOrbitControls.update();
 
     window.addEventListener( 'resize', onWindowResize );
-
 }
 
 export function setThreeCanvasSize(width: number, height: number) 
