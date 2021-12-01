@@ -1,11 +1,10 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { Color } from "three";
-import { intersectedObject, setThreeCanvasSize } from "../ThreeJs/main";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { setBrushColor } from "./brushSlice";
+import { store } from "./store";
 
 interface ICanvasSliceState {
     shouldComponentUpdate: boolean, // boolean dictates whether to update the canvas (changing this updates canvas)
     elementHasBeenSelected: boolean,
-    selectedColor: number | null,
     width: number,
     height: number
 }
@@ -16,25 +15,28 @@ const canvasSlice = createSlice(
         initialState: {
             shouldComponentUpdate: true, // boolean dictates whether to update the canvas (changing this updates canvas)
             elementHasBeenSelected: false,
-            selectedColor: 0xffffff
+            width: window.innerWidth,
+            height: window.innerHeight
+    
         } as ICanvasSliceState,
         reducers: {
             setCanvasUpdating: (state, action) => {
                 state.shouldComponentUpdate = action.payload;
             },
-            SetSelectedElement: (state, action) => {
-                state.elementHasBeenSelected = action.payload;
-                if(action.payload === true && intersectedObject && (intersectedObject as any)?.material?.color){
-                    const colour = (intersectedObject as any)?.material?.color as  { r:number, b:number, g: number, set: (color: number) => void };
-                    state.selectedColor = (colour.r*0xff0000 | colour.g*0x00ff00 | colour.b*0x0000ff);
-                } else {
-                    state.selectedColor = null
+            SetSelectedElement: {
+                reducer: (state, action: PayloadAction<boolean>) => {
+                    state.elementHasBeenSelected = action.payload;
+                },
+                prepare: (value: boolean):  PayloadAction<boolean> => {
+                    return {
+                        payload: value, 
+                        type: "SetSelectedElement"
+                    }
                 }
             },
             setCanvasSize: (state, action: {payload: {width: number, height: number}})=>{
                 state.width = action.payload.width;
                 state.height = action.payload.height;
-                setThreeCanvasSize(action.payload.width, action.payload.height)
             }
         },
     }

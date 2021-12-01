@@ -1,6 +1,9 @@
 import { CSSProperties, useEffect, useState } from 'react'
 import ReactColorPicker from '@super-effective/react-color-picker';
 import "./index.css"
+import { useAppSelector } from '../../app/hooks';
+import { useDispatch } from 'react-redux';
+import { setBrushColor } from '../../app/brushSlice';
 
 const style: Record<string, CSSProperties> = {
   container: {
@@ -30,28 +33,16 @@ const classes ={
 }
 
 interface IPicker {
-    selectedColor: string | null;
-    setSelectedColorCallback: (color: string)=>void
+    setSelectedColorCallback: null | ((color: string)=>void)
 }
 
-export default function Picker({selectedColor, setSelectedColorCallback}: IPicker ) {
-
-    useEffect(()=>{
-      if(selectedColor)
-      {
-        setState({
-          ...state, color: selectedColor
-        });
-      }
-    },[selectedColor])
-
-    const [state, setState] = useState({color: "blue"})
+export default function Picker({ setSelectedColorCallback}: IPicker ) {
+    const dispatch = useDispatch()
+    const selectedColor = useAppSelector(state=> state.brushSlice.selectedColor);
 
     const onChange = (color: string) => {
-        setState({
-            color
-        });
-        setSelectedColorCallback(color);
+        dispatch(setBrushColor(color))
+        if(setSelectedColorCallback) setSelectedColorCallback(color);
     }
 
     return <div style = {style.container}>
@@ -59,8 +50,8 @@ export default function Picker({selectedColor, setSelectedColorCallback}: IPicke
           className= {classes.colorPicker.container}
           showHex = {false} 
           showSwatch={false} 
-          color={state.color} 
+          color={selectedColor} 
           onChange={onChange} />
-        <div style={{...style.swath, backgroundColor: state.color}}></div>
+        <div style={{...style.swath, backgroundColor: selectedColor || ""}}></div>
     </div>
 }
