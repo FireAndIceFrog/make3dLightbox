@@ -1,7 +1,7 @@
 import { Object3D, Scene } from "three";
 import Lightbulb from "./lightbulb";
 
-export default class LightBulbFactory {
+class LightBulbFactory {
     private bulbs: Lightbulb[][] = [];
 
     constructor() {}
@@ -61,3 +61,5 @@ export default class LightBulbFactory {
         return flatBulbs.find(x=>x.getName() == name)
     }
 }
+
+export const lightBulbFactory = new LightBulbFactory()

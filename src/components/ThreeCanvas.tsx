@@ -5,13 +5,14 @@ import {init, renderer, scene, setThreeCanvasSize} from '../ThreeJs/main'
 import * as THREE from 'three';
 import { Scene } from 'three';
 import { useMouseClickHook } from '../hooks/canvasHooks';
+import { HandleMouseClickSingle } from '../ThreeJs/MouseEvents/MouseClickSingle';
 
 export default function ThreeCanvas() {
     useAppSelector(s=>s.canvasSlice.shouldComponentUpdate);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const width = useAppSelector(s=>s.canvasSlice.width);
     const height = useAppSelector(s=>s.canvasSlice.height);
-    const handleMouseClick = useMouseClickHook();
+    const isBrushing = useAppSelector(s=>s.brushSlice.isBrushing);
 
     if(canvasRef.current && (width !== canvasRef.current.width || height !== canvasRef.current.height )){
         setThreeCanvasSize(width, height)
@@ -27,5 +28,9 @@ export default function ThreeCanvas() {
         }
     },[canvasRef])
     
-    return <canvas ref = {canvasRef} onMouseDown ={handleMouseClick} style = {{width, height}}/>
+    return <canvas 
+    ref = {canvasRef} 
+    onMouseDown ={!isBrushing ? HandleMouseClickSingle : undefined} 
+    onMouseMove ={isBrushing ? HandleMouseClickSingle : undefined}
+    style = {{width, height}}/>
 }

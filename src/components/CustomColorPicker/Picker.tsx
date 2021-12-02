@@ -33,7 +33,7 @@ const classes ={
 }
 
 interface IPicker {
-    setSelectedColorCallback: null | ((color: string)=>void)
+  setSelectedColorCallback?: (color: string)=>void
 }
 
 export default function Picker({ setSelectedColorCallback}: IPicker ) {

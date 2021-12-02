@@ -4,7 +4,7 @@ import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLigh
 import { Color, Mesh, PointLight, Scene } from 'three';
 import { store } from '../app/store';
 import { ColouredPlane } from './ColouredPlane';
-import LightBulbFactory from './LightBulbFactory';
+import {lightBulbFactory} from './LightBulbFactory';
 import { intersectedObject } from './MouseEvents/IntersectedObject';
 
 export let renderer: THREE.WebGLRenderer;
@@ -17,26 +17,8 @@ export function EnableControls(status: boolean) {
     mouseOrbitControls.enabled = status
 }
 
-const lightBulbFactory = new LightBulbFactory();
-let colouredPlaneGeom:ColouredPlane
-let colouredPlaneMesh: Mesh
-
-
-export function SetSelectedColor (colorRep: any) {
-    intersectedObject.list.forEach(async (item: any) => {
-        if(item && item?.material?.color){
-            const name = item?.name as string;
-            const col = new Color(colorRep)
-    
-            const bulb = lightBulbFactory.findBulb(name);
-            bulb?.setColor(col)
-    
-            const lightBulbColors = lightBulbFactory.generateColors();
-            colouredPlaneMesh.geometry =  colouredPlaneGeom.updateColors(lightBulbColors)
-        }
-    })
-    
-}
+export let colouredPlaneGeom:ColouredPlane
+export let colouredPlaneMesh: Mesh
 
 export function init(canvas: HTMLCanvasElement = document.createElement('canvas')) {
     renderer = new THREE.WebGLRenderer( { antialias: true, canvas: canvas } );

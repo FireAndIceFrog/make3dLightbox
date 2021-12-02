@@ -1,4 +1,4 @@
-import { Color, Object3D, Vector2 } from "three";
+import { Color, Vector2 } from "three";
 import { setBrushColor } from "../../app/brushSlice";
 import { SetSelectedElement } from "../../app/canvasSlice";
 import { store } from "../../app/store";
@@ -9,7 +9,8 @@ const mouse = new Vector2();
 
 export const HandleMouseClickSingle: React.MouseEventHandler<HTMLCanvasElement> = ( event ) => {
     const dispatch = store.dispatch;
-    if(intersectedObject.list.length > 0){
+    const isBrushing = store.getState().brushSlice.isBrushing
+    if(intersectedObject.list.length > 0 && !isBrushing){
         dispatch(SetSelectedElement(false));
         dispatch(setBrushColor(null))
     }
@@ -21,16 +22,25 @@ export const HandleMouseClickSingle: React.MouseEventHandler<HTMLCanvasElement> 
 
     raycaster.setFromCamera( mouse, camera );
     const intersects = raycaster.intersectObjects( scene.children );
-    if(intersects.length > 0){
+
+    if(intersects.length > 0  && !isBrushing){
         intersectedObject.list = [];
     }
 
-	for ( let i = 0; i < intersects.length; i ++ ) {
-        intersectedObject.list.push(intersects[0].object);
-        break;
+	if(intersects[0] && intersects[0].object)
+    {
+        const objInList = intersectedObject.list.some(x=>x.name == intersects[0].object.name);
+        if(objInList)
+        {
+            intersectedObject.list.filter(item=> item.name === intersects[0].object.name);
+        }
+        else 
+        {
+            intersectedObject.list.push(intersects[0].object);
+        }
 	}
 
-    if(intersectedObject.list.length > 0)
+    if(intersectedObject.list.length > 0 && !isBrushing)
     {
         const colour = (intersectedObject.list[0] as any)?.material?.color as Color;
         dispatch(setBrushColor(colour.getHexString()))
