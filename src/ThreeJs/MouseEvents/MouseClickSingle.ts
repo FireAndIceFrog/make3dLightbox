@@ -10,7 +10,8 @@ const mouse = new Vector2();
 export const HandleMouseClickSingle: React.MouseEventHandler<HTMLCanvasElement> = ( event ) => {
     const dispatch = store.dispatch;
     const isBrushing = store.getState().brushSlice.isBrushing
-    if(intersectedObject.list.length > 0 && !isBrushing){
+    if(intersectedObject.length > 0 && !isBrushing){
+        
         dispatch(SetSelectedElement(false));
         dispatch(setBrushColor(null))
     }
@@ -24,26 +25,30 @@ export const HandleMouseClickSingle: React.MouseEventHandler<HTMLCanvasElement> 
     const intersects = raycaster.intersectObjects( scene.children );
 
     if(intersects.length > 0  && !isBrushing){
-        intersectedObject.list = [];
+        intersectedObject.reset()
     }
 
 	if(intersects[0] && intersects[0].object)
     {
-        const objInList = intersectedObject.list.some(x=>x.name == intersects[0].object.name);
+        const objInList = intersectedObject.some(x=>x.name == intersects[0].object.name);
         if(objInList)
         {
-            intersectedObject.list.filter(item=> item.name === intersects[0].object.name);
+            intersectedObject.filter(item=> item.name === intersects[0].object.name);
         }
         else 
         {
-            intersectedObject.list.push(intersects[0].object);
+            intersectedObject.push(intersects[0].object);
         }
 	}
 
-    if(intersectedObject.list.length > 0 && !isBrushing)
+    if(intersects.length > 0 && !isBrushing)
     {
-        const colour = (intersectedObject.list[0] as any)?.material?.color as Color;
-        dispatch(setBrushColor(colour.getHexString()))
-        dispatch(SetSelectedElement(true));
+        const colour = (intersects[0] as any)?.object?.material?.color as Color | undefined;
+        
+        if(colour)
+        {
+            dispatch(setBrushColor(colour.getHexString()))
+            dispatch(SetSelectedElement(true));
+        }
     }
 }

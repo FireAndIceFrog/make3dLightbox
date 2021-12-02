@@ -1,6 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { setBrushColor } from "./brushSlice";
-import { store } from "./store";
 
 interface ICanvasSliceState {
     shouldComponentUpdate: boolean, // boolean dictates whether to update the canvas (changing this updates canvas)

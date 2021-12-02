@@ -5,7 +5,8 @@ import "./index.css"
 export default function CustomColorPickerContainer() {
   const isSelected = useAppSelector(state=> state.canvasSlice.elementHasBeenSelected);
   const isBrushing = useAppSelector(state=>state.brushSlice.isBrushing)
+  const color = useAppSelector(state=>state.brushSlice.selectedColor)
 
-  if(isSelected || isBrushing) return <Picker></Picker>
+  if((isSelected || isBrushing) && color) return <Picker></Picker>
   else return <div></div>
-  }
+}
