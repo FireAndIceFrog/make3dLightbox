@@ -41,13 +41,17 @@ export const HandleMouseClickSingle: React.MouseEventHandler<HTMLCanvasElement> 
         }
 	}
 
-    if(intersects.length > 0 && !isBrushing)
+    if(intersects.length > 0)
     {
         const colour = (intersects[0] as any)?.object?.material?.color as Color | undefined;
         
         if(colour)
         {
             dispatch(setBrushColor(colour.getHexString()))
+        }
+
+        if(!isBrushing)
+        {
             dispatch(SetSelectedElement(true));
         }
     }

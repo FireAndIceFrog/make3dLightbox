@@ -73,6 +73,10 @@ class IntersectedObject implements IIntersectedObject{
     }
 
     set color(color: string|null) {
+        if(color !== this.currColor)
+        {
+            this.SetSelectedColor(color);
+        }
         this.currColor = color;
     }
 
