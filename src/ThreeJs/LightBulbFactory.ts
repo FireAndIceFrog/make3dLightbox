@@ -4,8 +4,6 @@ import Lightbulb from "./lightbulb";
 class LightBulbFactory {
     private bulbs: Lightbulb[][] = [];
 
-    constructor() {}
-
     public generateLightBulbs(z:number, row:number, cols:number, scene: Object3D<Event> | Scene)
     {
         const lightbulbs: Lightbulb[][] = [];
@@ -58,7 +56,7 @@ class LightBulbFactory {
 
     findBulb(name:string) {
         const flatBulbs = this.bulbs.flat()
-        return flatBulbs.find(x=>x.getName() == name)
+        return flatBulbs.find(x=>x.getName() === name)
     }
 }
 

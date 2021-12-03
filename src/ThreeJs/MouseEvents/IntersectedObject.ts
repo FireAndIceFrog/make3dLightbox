@@ -1,4 +1,5 @@
 import { Color, Event, Object3D } from "three";
+import { setBrushNeedsUpdate } from "../../app/brushSlice";
 import { store } from "../../app/store";
 import { lightBulbFactory } from "../LightBulbFactory";
 import { colouredPlaneGeom, colouredPlaneMesh } from "../main";
@@ -20,12 +21,18 @@ class IntersectedObject implements IIntersectedObject{
     constructor() {
         store.subscribe(()=>{
             const state = store.getState();
-            if(state.brushSlice.selectedColor !== this.currColor)
+            if( state.brushSlice.needsUpdate || state.brushSlice.selectedColor !== this.currColor)
             {
                 this.currColor = state.brushSlice.selectedColor;
-                if((state.canvasSlice.elementHasBeenSelected || state.brushSlice.isBrushing) && this.currColor !== null)
+                if( (state.canvasSlice.elementHasBeenSelected || state.brushSlice.isBrushing) && this.currColor !== null)
                 {
                     this.SetSelectedColor(this.currColor)
+
+                    if(state.brushSlice.isBrushing)
+                    {
+                        this.reset();
+                        store.dispatch(setBrushNeedsUpdate(false))
+                    }
                 }
             }
         })

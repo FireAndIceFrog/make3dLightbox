@@ -13,7 +13,7 @@
         justify-content: center;
         align-items: center;
         box-shadow: 0 3px 12px rgba(255, 255, 255, 0.452), 0 3px 12px rgba(255, 255, 255, 0.452);
-        cursor: pointer;
+        z-index:500;
 
         &:hover {
             background-color: rgb(189, 189, 189);

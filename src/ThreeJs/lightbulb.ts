@@ -1,4 +1,4 @@
-import {  Color, Mesh, MeshPhongMaterial,  NoBlending, Object3D, PointLight, Scene, SphereGeometry, SpotLight, SubtractiveBlending } from "three";
+import {  Color, Mesh, MeshPhongMaterial,  NoBlending, Object3D, Scene, SphereGeometry } from "three";
 import { generateUUID } from "three/src/math/MathUtils";
 
 export default class Lightbulb {

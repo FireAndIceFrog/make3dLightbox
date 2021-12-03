@@ -7,6 +7,6 @@ export default function CustomColorPickerContainer() {
   const isBrushing = useAppSelector(state=>state.brushSlice.isBrushing)
   const color = useAppSelector(state=>state.brushSlice.selectedColor)
 
-  if((isSelected || isBrushing) && color) return <Picker></Picker>
+  if((isSelected && color) || isBrushing ) return <Picker></Picker>
   else return <div></div>
 }

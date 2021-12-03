@@ -1,5 +1,5 @@
 import { Color, Vector2 } from "three";
-import { setBrushColor } from "../../app/brushSlice";
+import { setBrushColor, setBrushNeedsUpdate } from "../../app/brushSlice";
 import { SetSelectedElement } from "../../app/canvasSlice";
 import { store } from "../../app/store";
 import { raycaster, camera, scene } from "../main";
@@ -30,7 +30,7 @@ export const HandleMouseClickSingle: React.MouseEventHandler<HTMLCanvasElement> 
 
 	if(intersects[0] && intersects[0].object)
     {
-        const objInList = intersectedObject.some(x=>x.name == intersects[0].object.name);
+        const objInList = intersectedObject.some(x=>x.name.toLowerCase() === intersects[0].object.name.toLowerCase());
         if(objInList)
         {
             intersectedObject.filter(item=> item.name === intersects[0].object.name);
@@ -43,16 +43,22 @@ export const HandleMouseClickSingle: React.MouseEventHandler<HTMLCanvasElement> 
 
     if(intersects.length > 0)
     {
-        const colour = (intersects[0] as any)?.object?.material?.color as Color | undefined;
         
-        if(colour)
-        {
-            dispatch(setBrushColor(colour.getHexString()))
-        }
 
         if(!isBrushing)
         {
             dispatch(SetSelectedElement(true));
+            
+            const colour = (intersects[0] as any)?.object?.material?.color as Color | undefined;
+            if(colour)
+            {
+                dispatch(setBrushColor(colour.getHexString()))
+            }
         }
+        else 
+        {
+            dispatch(setBrushNeedsUpdate(true));
+        }
+        
     }
 }

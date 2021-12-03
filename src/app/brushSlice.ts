@@ -1,10 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { SetSelectedElement } from "./canvasSlice";
-import { store } from "./store";
 
 interface IBrushSlice {
     isBrushing: boolean
     selectedColor: null | string
+    needsUpdate: boolean
 }
 
 const brushSlice = createSlice(
@@ -12,7 +11,8 @@ const brushSlice = createSlice(
         name: "brushSlice",
         initialState: {
             isBrushing: false,
-            selectedColor: null
+            selectedColor: null,
+            needsUpdate: false
         } as IBrushSlice,
         reducers: {
             setBrushStatus: (state, action: PayloadAction<boolean>) => {
@@ -20,10 +20,13 @@ const brushSlice = createSlice(
             },
             setBrushColor: (state,action: PayloadAction<string | null>) => {
                 state.selectedColor = action.payload
+            },
+            setBrushNeedsUpdate: (state, action: PayloadAction<boolean>) => {
+                state.needsUpdate = action.payload
             }
         },
     }
 )
 
-export const { setBrushStatus, setBrushColor } = brushSlice.actions;
+export const { setBrushStatus, setBrushColor, setBrushNeedsUpdate } = brushSlice.actions;
 export const brushSliceReducer = brushSlice.reducer;

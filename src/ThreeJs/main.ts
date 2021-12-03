@@ -1,11 +1,10 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
-import { Color, Mesh, PointLight, Scene } from 'three';
+import { Mesh, PointLight, Scene } from 'three';
 import { store } from '../app/store';
 import { ColouredPlane } from './ColouredPlane';
 import {lightBulbFactory} from './LightBulbFactory';
-import { intersectedObject } from './MouseEvents/IntersectedObject';
 
 export let renderer: THREE.WebGLRenderer;
 export let scene: THREE.Object3D<THREE.Event> | THREE.Scene;

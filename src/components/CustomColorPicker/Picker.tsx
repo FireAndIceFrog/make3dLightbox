@@ -1,9 +1,10 @@
-import { CSSProperties, useEffect, useState } from 'react'
+import { CSSProperties } from 'react'
 import ReactColorPicker from '@super-effective/react-color-picker';
-import "./index.css"
 import { useAppSelector } from '../../app/hooks';
 import { useDispatch } from 'react-redux';
 import { setBrushColor } from '../../app/brushSlice';
+
+import "./index.css"
 
 const style: Record<string, CSSProperties> = {
   container: {
@@ -14,7 +15,8 @@ const style: Record<string, CSSProperties> = {
     display: "flex",
     width: "20vw",
     height: "20vh",
-    borderRadius: "10px"
+    borderRadius: "10px",
+    zIndex:1000
   },
   flexBox: {
 
