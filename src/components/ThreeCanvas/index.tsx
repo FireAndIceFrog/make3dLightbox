@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAppSelector } from '../../app/hooks'
 import {init, renderer, setThreeCanvasSize} from '../../ThreeJs/main'
-import { HandleMouseClickSingle } from '../../ThreeJs/MouseEvents/MouseClickSingle';
+import { HandlePaintingMouseClick, HandleStandardMouseClick } from '../../ThreeJs/MouseEvents/MouseClickSingle';
 import "./index.scss"
 
 const classes = {
@@ -35,9 +35,9 @@ export default function ThreeCanvas() {
     
     return <canvas 
     ref = {canvasRef} 
-    onMouseDown ={!isBrushing ? HandleMouseClickSingle : ()=>setMouseDown(true)} 
+    onMouseDown ={!isBrushing ? HandleStandardMouseClick : ()=>setMouseDown(true)} 
     onMouseUp = {()=>setMouseDown(false)}
-    onMouseMove ={isBrushing &&  mouseDown? HandleMouseClickSingle : undefined}
+    onMouseMove ={isBrushing &&  mouseDown? HandlePaintingMouseClick : undefined}
     className = {currClass}
     style = {
         {
