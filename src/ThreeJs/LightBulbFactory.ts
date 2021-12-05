@@ -43,12 +43,12 @@ class LightBulbFactory {
     }
 
     generateColors() {
-        const colors:number[] = [];
+        const colors:number[][] = [];
         for (let i = 0; i < this.bulbs.length; i++)
         {
             for (let j = 0; j < this.bulbs[i].length; j++)
             {
-                colors.push(...this.bulbs[i][j].getColor());
+                colors.push(this.bulbs[i][j].getColor());
             }
         }
         return colors;

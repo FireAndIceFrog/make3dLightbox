@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { BufferGeometry } from 'three';
+import { isJSDocCallbackTag } from 'typescript';
 
 export class ColouredPlane {
     private geometry = new BufferGeometry();
@@ -20,13 +21,13 @@ export class ColouredPlane {
             this.size = size;
         }
         if(segments) {
-            this.segments = segments;
+            this.segments = segments ;
         }
-        this.halfSize = this.size / 2;
-        this.triangleSize = this.size / this.segments;
+        this.halfSize = this.size / 2 ;
+        this.triangleSize = this.size / this.segments ;
     }
 
-    render(colours?: number[]): BufferGeometry {
+    render(colours?: number[][]): BufferGeometry {
         if (!this.rendered) {
             this.rerender(colours);
             this.rendered = true;
@@ -34,14 +35,18 @@ export class ColouredPlane {
         return this.geometry;
     }
 
-    rerender(colours?: number[]): BufferGeometry {
+    rerender(colours?: number[][]): BufferGeometry {
         const dummyColors: number[] = []
+        this.vertices = []
+        this.normals = []
+        this.indices = []
+        this.colors = []
+
         for ( let row = 0; row < this.segments; row++ ) {
 
             const y = ( row * this.triangleSize ) - this.halfSize; // make y relative to the center of the plane
 
             for ( let col = 0; col < this.segments; col ++ ) {
-
                 const x = ( col * this.triangleSize ) - this.halfSize; // make x relative to the center of the plane
 
                 this.vertices.push( x, - y, 0 ); //centre of the square
@@ -59,13 +64,17 @@ export class ColouredPlane {
         if(!colours) {
             this.colors = dummyColors;
         } else {
-            this.colors = colours;
+            this.colors = colours.map(x=>{
+                const items = []
+                items.push(x)
+                return items.flat()
+            }).flat();
         }
         // generate indices (data for element array buffer)
 
-        for ( let col = 0; col < this.segments-1; col ++ ) {
+        for ( let col = 0; col < (this.segments-1); col ++ ) {
 
-            for ( let row = 0; row < this.segments-1; row ++ ) {
+            for ( let row = 0; row < (this.segments-1); row ++ ) {
 
                 const topLeft = ( col * this.segments ) + row;
                 const topRight = (col *  this.segments ) + ( row + 1 );
@@ -87,8 +96,14 @@ export class ColouredPlane {
         return this.geometry;
     }
 
-    updateColors(colours: number[]) {
-        this.colors = colours;
+    updateColors(colours: number[][]) {
+        
+        this.colors = colours.map(x=>{
+            const items = []
+            items.push(x)
+            return items.flat()
+        }).flat();
+        
         this.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( this.colors, 3 ) );
         return this.geometry
     }

@@ -51,7 +51,7 @@ export function init(canvas: HTMLCanvasElement = document.createElement('canvas'
     
     const lightBulbColors = lightBulbFactory.generateColors();
     const numBulbs = lightBulbFactory.cols();
-    colouredPlaneGeom = new ColouredPlane(11, numBulbs);
+    colouredPlaneGeom = new ColouredPlane(5, numBulbs);
 
     colouredPlaneMesh = new THREE.Mesh( colouredPlaneGeom.render(lightBulbColors), matKnot );
     colouredPlaneMesh.name = 'meshKnot';
