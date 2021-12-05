@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAppSelector } from '../../app/hooks'
 import {init, renderer, setThreeCanvasSize} from '../../ThreeJs/main'
-import { HandlePaintingMouseClick, HandleStandardMouseClick } from '../../ThreeJs/MouseEvents/MouseClickSingle';
+import { HandlePaintingMouseClick } from '../../ThreeJs/MouseEvents/HandlePaintingMouseClick';
+import { HandleStandardMouseClick } from '../../ThreeJs/MouseEvents/HandleStandardMouseClick';
 import "./index.scss"
 
 const classes = {

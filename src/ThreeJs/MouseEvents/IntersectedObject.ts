@@ -3,6 +3,8 @@ import { setBrushNeedsUpdate } from "../../app/brushSlice";
 import { store } from "../../app/store";
 import { lightBulbFactory } from "../LightBulbFactory";
 import { colouredPlaneGeom, colouredPlaneMesh } from "../main";
+import { Vector2 } from "three";
+import { raycaster, camera, scene } from "../main";
 
 type listIterator = (value: Object3D<Event>, index: number, array: Object3D<THREE.Event>[]) => boolean | Object3D<THREE.Event>
 
@@ -17,6 +19,7 @@ interface IIntersectedObject
 class IntersectedObject implements IIntersectedObject{
     private currColor: string | null = null;
     private list: Object3D<THREE.Event>[] = [];
+    private mouse = new Vector2();
 
     constructor() {
         store.subscribe(()=>{
@@ -55,6 +58,29 @@ class IntersectedObject implements IIntersectedObject{
         })
     }
 
+    public intersectOnFrame(event: React.MouseEvent<HTMLCanvasElement, MouseEvent>, shouldReset: boolean = true) {
+        this.mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+        this.mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+    
+        raycaster.setFromCamera( this.mouse, camera );
+        const intersects = raycaster.intersectObjects( scene.children );
+    
+        if(intersects.length > 0  && shouldReset){
+            this.reset()
+        }
+    
+        if(intersects[0] && intersects[0].object)
+        {
+            const objInList = this.some(x=>x.name.toLowerCase() === intersects[0].object.name.toLowerCase());
+            if(!objInList)
+            {
+                this.push(intersects[0].object);
+            }
+        }
+    
+        return intersects
+    }
+
     public push(...items: Object3D<THREE.Event>[])
     {
         this.list.push(...items)
@@ -91,6 +117,7 @@ class IntersectedObject implements IIntersectedObject{
         return this.currColor;
     }
 }
+
 
 const intersectedObject = new IntersectedObject()
 export {intersectedObject}
