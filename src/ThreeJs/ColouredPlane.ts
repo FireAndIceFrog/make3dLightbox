@@ -10,7 +10,7 @@ export class ColouredPlane {
     private size = 10;
     private segments = 10;
     private halfSize = 0;
-    private segmentSize = 0;
+    private triangleSize = 0;
     private rendered = false;
 
 
@@ -23,7 +23,7 @@ export class ColouredPlane {
             this.segments = segments;
         }
         this.halfSize = this.size / 2;
-        this.segmentSize = this.size / this.segments;
+        this.triangleSize = this.size / this.segments;
     }
 
     render(colours?: number[]): BufferGeometry {
@@ -35,62 +35,49 @@ export class ColouredPlane {
     }
 
     rerender(colours?: number[]): BufferGeometry {
-        if(!colours) {
-            for ( let i = 0; i < this.segments; i ++ ) {
+        const dummyColors: number[] = []
+        for ( let row = 0; row < this.segments; row++ ) {
 
-                const y = ( i * this.segmentSize ) - this.halfSize;
+            const y = ( row * this.triangleSize ) - this.halfSize; // make y relative to the center of the plane
 
-                for ( let j = 0; j < this.segments; j ++ ) {
+            for ( let col = 0; col < this.segments; col ++ ) {
 
-                    const x = ( j * this.segmentSize ) - this.halfSize;
+                const x = ( col * this.triangleSize ) - this.halfSize; // make x relative to the center of the plane
 
-                    this.vertices.push( x, - y, 0 );
-                    this.normals.push( 0, 0, 1 );
+                this.vertices.push( x, - y, 0 ); //centre of the square
+                this.normals.push( 0, 0, 1 );
 
+                if(!colours) {
                     const r = ( x / this.size ) + 0.5;
                     const g = ( y / this.size ) + 0.5;
-
-                    this.colors.push( r, g, 0 );
+                    dummyColors.push( r, g, 0 );
                 }
-
             }
+
+        }
+        
+        if(!colours) {
+            this.colors = dummyColors;
         } else {
             this.colors = colours;
-            for ( let i = 0; i < this.segments; i ++ ) {
-
-                const y = ( i * this.segmentSize ) - this.halfSize;
-
-                for ( let j = 0; j < this.segments; j ++ ) {
-
-                    const x = ( j * this.segmentSize ) - this.halfSize;
-
-                    this.vertices.push( x, - y, 0 );
-                    this.normals.push( 0, 0, 1 );
-                }
-
-            }
         }
         // generate indices (data for element array buffer)
 
-        for ( let i = 0; i < this.segments-1; i ++ ) {
+        for ( let col = 0; col < this.segments-1; col ++ ) {
 
-            for ( let j = 0; j < this.segments-1; j ++ ) {
+            for ( let row = 0; row < this.segments-1; row ++ ) {
 
-                const a = i * ( this.segments ) + ( j + 1 );
-                const b = i * ( this.segments ) + j;
-                const c = ( i + 1 ) * ( this.segments ) + j;
-                const d = ( i + 1 ) * ( this.segments ) + ( j + 1 );
-
+                const topLeft = ( col * this.segments ) + row;
+                const topRight = (col *  this.segments ) + ( row + 1 );
+                const bottomLeft = ( ( col + 1) * this.segments ) + row;
+                const bottomRight = ( ( col + 1 ) * this.segments ) + ( row + 1);
                 // generate two faces (triangles) per iteration
 
-                this.indices.push( a, b, d ); // face one
-                this.indices.push( b, c, d ); // face two
+                this.indices.push( topLeft, topRight, bottomRight ); // face one
 
+                this.indices.push( bottomRight, bottomLeft, topLeft ); // face two
             }
-
         }
-
-        //
 
         this.geometry.setIndex( this.indices );
         this.geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( this.vertices, 3 ) );

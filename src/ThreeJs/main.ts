@@ -33,7 +33,7 @@ export function init(canvas: HTMLCanvasElement = document.createElement('canvas'
 
     RectAreaLightUniformsLib.init();
 
-    lightBulbFactory.generateLightBulbs(0.5, 10, 10, scene as Scene);
+    lightBulbFactory.generateLightBulbs(0.5, 2, 2, scene as Scene);
     
     const highlightSource = new PointLight( 0xffffff, 1, 100);
     highlightSource.position.set(0, 0,  25);
