@@ -1,4 +1,4 @@
-import { Color, Event, Object3D } from "three";
+import { Color, Event, Mesh, Object3D } from "three";
 import { setBrushNeedsUpdate } from "../../app/brushSlice";
 import { store } from "../../app/store";
 import { lightBulbFactory } from "../LightBulbFactory";
@@ -52,7 +52,7 @@ class IntersectedObject implements IIntersectedObject{
                     bulb.setColor(col)
         
                     const lightBulbColors = lightBulbFactory.generateColors();
-                    colouredPlaneMesh.geometry =  colouredPlaneGeom.updateColors(lightBulbColors)
+                    colouredPlaneGeom.updateColors(lightBulbColors) as Mesh;
                 }
             }
         })

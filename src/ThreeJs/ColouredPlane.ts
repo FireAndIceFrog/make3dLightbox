@@ -1,110 +1,59 @@
 import * as THREE from 'three';
-import { BufferGeometry } from 'three';
-import { isJSDocCallbackTag } from 'typescript';
+import { BufferGeometry, IUniform, Mesh, PlaneGeometry, ShaderMaterial, Vector2, Vector3 } from 'three';
+import DiffuseShader from './shaders/DiffuseShader';
 
 export class ColouredPlane {
-    private geometry = new BufferGeometry();
-    private indices: number[] = [];
-    private vertices: number[] = [];
-    private normals: number[] = [];
-    private colors: number[] = [];
-    private size = 10;
-    private segments = 10;
-    private halfSize = 0;
-    private triangleSize = 0;
+    private geometry = new PlaneGeometry();
+    private width = 0;
+    private height = 0;
+    private rows = 0;
+    private cols = 0;
     private rendered = false;
-
+    private material = new ShaderMaterial();
+    private mesh: undefined | Mesh = undefined
 
     // generate vertices, normals and color data for a simple grid geometry
-    constructor(size?:number, segments?: number) {
-        if(size) {
-            this.size = size;
-        }
-        if(segments) {
-            this.segments = segments ;
-        }
-        this.halfSize = this.size / 2 ;
-        this.triangleSize = this.size / this.segments ;
+    constructor(width: number, height: number) {
+        this.width = width;
+        this.height = height;
     }
 
-    render(colours?: number[][]): BufferGeometry {
-        if (!this.rendered) {
+    render(colours?: number[][]): Mesh | undefined {
+        if (!this.rendered && colours) {
             this.rerender(colours);
             this.rendered = true;
         }
-        return this.geometry;
+        return this.mesh;
     }
 
-    rerender(colours?: number[][]): BufferGeometry {
-        const dummyColors: number[] = []
-        this.vertices = []
-        this.normals = []
-        this.indices = []
-        this.colors = []
+    rerender(colors: number[][]): Mesh {
+        this.geometry = new PlaneGeometry(this.width, this.height);
+        this.rows = colors.length;
+        this.cols = colors[0].length;
 
-        for ( let row = 0; row < this.segments; row++ ) {
-
-            const y = ( row * this.triangleSize ) - this.halfSize; // make y relative to the center of the plane
-
-            for ( let col = 0; col < this.segments; col ++ ) {
-                const x = ( col * this.triangleSize ) - this.halfSize; // make x relative to the center of the plane
-
-                this.vertices.push( x, - y, 0 ); //centre of the square
-                this.normals.push( 0, 0, 1 );
-
-                if(!colours) {
-                    const r = ( x / this.size ) + 0.5;
-                    const g = ( y / this.size ) + 0.5;
-                    dummyColors.push( r, g, 0 );
-                }
-            }
-
-        }
-        
-        if(!colours) {
-            this.colors = dummyColors;
-        } else {
-            this.colors = colours.map(x=>{
-                const items = []
-                items.push(x)
-                return items.flat()
-            }).flat();
-        }
-        // generate indices (data for element array buffer)
-
-        for ( let col = 0; col < (this.segments-1); col ++ ) {
-
-            for ( let row = 0; row < (this.segments-1); row ++ ) {
-
-                const topLeft = ( col * this.segments ) + row;
-                const topRight = (col *  this.segments ) + ( row + 1 );
-                const bottomLeft = ( ( col + 1) * this.segments ) + row;
-                const bottomRight = ( ( col + 1 ) * this.segments ) + ( row + 1);
-                // generate two faces (triangles) per iteration
-
-                this.indices.push( topLeft, topRight, bottomRight ); // face one
-
-                this.indices.push( bottomRight, bottomLeft, topLeft ); // face two
-            }
-        }
-
-        this.geometry.setIndex( this.indices );
-        this.geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( this.vertices, 3 ) );
-        this.geometry.setAttribute( 'normal', new THREE.Float32BufferAttribute( this.normals, 3 ) );
-        this.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( this.colors, 3 ) );
-        this.geometry.rotateZ(Math.PI/2);
-        return this.geometry;
+        this.material = new ShaderMaterial({
+            fragmentShader: `#define listLength ${3} \n${DiffuseShader}`,
+            uniforms: {
+                resolution: {value: new Vector2(1000,1000)},
+                positions: { type: 'v2v', value: [
+                    new Vector2(0.5,0.2),
+                    new Vector2(-0.5, 0.2),
+                    new Vector2(0.0, -0.7)
+                ]} as unknown as IUniform<Vector2>,
+                colors: { type: 'v2v', value: [
+                    new Vector3(1,0,0),
+                    new Vector3(0,1,0),
+                    new Vector3(0,0,1)
+                ] } as unknown as IUniform<Vector2>
+            },
+            glslVersion: 1
+        })
+        this.mesh = new Mesh(this.geometry, this.material)
+        return this.mesh;
     }
 
     updateColors(colours: number[][]) {
         
-        this.colors = colours.map(x=>{
-            const items = []
-            items.push(x)
-            return items.flat()
-        }).flat();
-        
-        this.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( this.colors, 3 ) );
-        return this.geometry
+        return this.mesh
     }
 }

@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
-import { Mesh, PointLight, Scene } from 'three';
+import { AmbientLight, Mesh, PointLight, Scene } from 'three';
 import { store } from '../app/store';
 import { ColouredPlane } from './ColouredPlane';
 import {lightBulbFactory} from './LightBulbFactory';
@@ -42,18 +42,14 @@ export function init(canvas: HTMLCanvasElement = document.createElement('canvas'
     const light = new THREE.AmbientLight( 0xffffff,1 ); // soft white light
     scene.add( light );
 
-    // setGradient(box);
-    const matKnot = new THREE.MeshPhongMaterial( 
-        { 
-            side: THREE.DoubleSide,
-            vertexColors: true
-        } );
-    
+    const ambientLight = new AmbientLight(0xffffff, 2)
+    scene.add( ambientLight );
+
     const lightBulbColors = lightBulbFactory.generateColors();
     const numBulbs = lightBulbFactory.cols();
     colouredPlaneGeom = new ColouredPlane(5, numBulbs);
 
-    colouredPlaneMesh = new THREE.Mesh( colouredPlaneGeom.render(lightBulbColors), matKnot );
+    colouredPlaneMesh = colouredPlaneGeom.render(lightBulbColors) as Mesh;
     colouredPlaneMesh.name = 'meshKnot';
     colouredPlaneMesh.position.set( 0.5, 5.5, 0 );
     scene.add( colouredPlaneMesh );
