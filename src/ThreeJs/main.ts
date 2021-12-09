@@ -47,11 +47,11 @@ export function init(canvas: HTMLCanvasElement = document.createElement('canvas'
 
     const lightBulbColors = lightBulbFactory.generateColors();
     const numBulbs = lightBulbFactory.cols();
-    colouredPlaneGeom = new ColouredPlane(5, numBulbs);
+    colouredPlaneGeom = new ColouredPlane(10, 10);
 
     colouredPlaneMesh = colouredPlaneGeom.render(lightBulbColors) as Mesh;
     colouredPlaneMesh.name = 'meshKnot';
-    colouredPlaneMesh.position.set( 0.5, 5.5, 0 );
+    colouredPlaneMesh.position.set( 0, 0, 0 );
     scene.add( colouredPlaneMesh );
 
     mouseOrbitControls = new OrbitControls( camera, renderer.domElement );

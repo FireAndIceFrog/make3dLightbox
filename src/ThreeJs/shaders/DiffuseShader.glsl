@@ -4,11 +4,9 @@
 #define TAU 6.28318530718
 
 precision mediump float;
-uniform float time;
-uniform vec2  mouse;
-uniform vec2  resolution;
+const vec2  resolution = vec2(1000,500);
 //uniform vec2 positions[listLength];
-//uniform vec2 colors[listLength]
+//uniform vec2 colors[listLength];
 
 vec3 blend(vec3 color, vec3 color2)
 {
