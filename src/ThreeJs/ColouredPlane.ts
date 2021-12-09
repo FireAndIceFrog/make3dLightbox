@@ -33,20 +33,20 @@ export class ColouredPlane {
         this.cols = colors[0].length;
 
         this.material = new ShaderMaterial({
-            fragmentShader: `#define listLength ${4} \n${DiffuseShader}`,
+            fragmentShader: `#define listLength ${3} \n${DiffuseShader}`,
             vertexShader: BasicVertex,
             uniforms: {
                  resolution: {value: new Vector2(this.width,this.height)},
-                // positions: { type: 'v2v', value: [
-                //     new Vector2(0.5,0.2),
-                //     new Vector2(-0.5, 0.2),
-                //     new Vector2(0.0, -0.7)
-                // ]} as unknown as IUniform<Vector2>,
-                // colors: { type: 'v2v', value: [
-                //     new Vector3(1,0,0),
-                //     new Vector3(0,1,0),
-                //     new Vector3(0,0,1)
-                // ] } as unknown as IUniform<Vector2>
+                positions: { type: 'v2v', value: [
+                    new Vector2(0.5,0.2),
+                    new Vector2(-0.5, 0.2),
+                    new Vector2(0.0, -0.7)
+                ]} as unknown as IUniform<Vector2>,
+                colors: { type: 'v3v', value: [
+                    new Vector3(1,0,0),
+                    new Vector3(0,1,0),
+                    new Vector3(0,0,1)
+                ] } as unknown as IUniform<Vector2>
             },
             glslVersion: 1
         })
