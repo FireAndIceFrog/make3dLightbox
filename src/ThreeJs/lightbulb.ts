@@ -26,6 +26,18 @@ export default class Lightbulb {
         this.bulb.position.set(x, y, z);
     }
 
+    public get x (){
+        return this.bulb.position.x
+    }
+
+    public get y (){
+        return this.bulb.position.y
+    }
+
+    public get z() {
+        return this.bulb.position.z
+    }
+
     public getColor(): number[] {
         return [(this.color&0xff0000)/0xff0000, (this.color&0x00ff00)/0x00ff00, (this.color&0x0000ff)/0x0000ff];
     }

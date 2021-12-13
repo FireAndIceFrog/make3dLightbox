@@ -1,5 +1,5 @@
 export default `
-#define specularHighlight 1.8
+#define specularHighlight 1.4
 #define PI 3.14159265359
 #define TAU 6.28318530718
 

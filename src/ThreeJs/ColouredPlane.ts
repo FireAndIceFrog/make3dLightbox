@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { BufferGeometry, IUniform, Mesh, PlaneGeometry, ShaderMaterial, Vector2, Vector3 } from 'three';
+import { BufferGeometry, IUniform, Material, Mesh, PlaneGeometry, ShaderMaterial, Vector2, Vector3 } from 'three';
 import BasicVertex from './shaders/BasicVertex';
 import DiffuseShader from './shaders/DiffuseShader';
 
@@ -19,7 +19,7 @@ export class ColouredPlane {
         this.height = height;
     }
 
-    render(colours?: number[][]): Mesh | undefined {
+    render(colours?: number[][][]): Mesh | undefined {
         if (!this.rendered && colours) {
             this.rerender(colours);
             this.rendered = true;
@@ -27,26 +27,33 @@ export class ColouredPlane {
         return this.mesh;
     }
 
-    rerender(colors: number[][]): Mesh {
+    rerender(colors: number[][][]): Mesh {
         this.geometry = new PlaneGeometry(this.width, this.height);
         this.rows = colors.length;
         this.cols = colors[0].length;
 
+        let negativeSpacingX = 0
+        let negativeSpacingY = 0
+        let positions: Vector2[] = []
+        let colorVecs: Vector3[] = []
+        for(let i = 0; i < colors.length; ++i) {
+            let spacingY = (i+1)/colors.length -0.5
+            for(let j = 0; j < colors[0].length; ++j) {
+                let spacingX = (j+1)/colors[0].length -0.5
+                let positionVec = new Vector2(spacingX - negativeSpacingX, spacingY - negativeSpacingY)
+                let colorVec = new Vector3(colors[i][j][0], colors[i][j][1], colors[i][j][2])
+                colorVecs.push(colorVec)
+                positions.push(positionVec)
+            }
+        }
+
         this.material = new ShaderMaterial({
-            fragmentShader: `#define listLength ${3} \n${DiffuseShader}`,
+            fragmentShader: `#define listLength ${colorVecs.length} \n${DiffuseShader}`,
             vertexShader: BasicVertex,
             uniforms: {
                  resolution: {value: new Vector2(this.width,this.height)},
-                positions: { type: 'v2v', value: [
-                    new Vector2(0.5,0.2),
-                    new Vector2(-0.5, 0.2),
-                    new Vector2(0.0, -0.7)
-                ]} as unknown as IUniform<Vector2>,
-                colors: { type: 'v3v', value: [
-                    new Vector3(1,0,0),
-                    new Vector3(0,1,0),
-                    new Vector3(0,0,1)
-                ] } as unknown as IUniform<Vector2>
+                positions: { type: 'v2v', value: positions} as unknown as IUniform<Vector2>,
+                colors: { type: 'v3v', value: colorVecs } as unknown as IUniform<Vector3>
             },
             glslVersion: 1
         })
@@ -54,8 +61,33 @@ export class ColouredPlane {
         return this.mesh;
     }
 
-    updateColors(colours: number[][]) {
-        
+    updateColors(colors: number[][][]) {
+        let negativeSpacingX = 0
+        let negativeSpacingY = 0
+        let positions: Vector2[] = []
+        let colorVecs: Vector3[] = []
+        for(let i = 0; i < colors.length; ++i) {
+            let spacingY = (i+1)/colors.length -0.5
+            for(let j = 0; j < colors[0].length; ++j) {
+                let spacingX = (j+1)/colors[0].length -0.5
+                let positionVec = new Vector2(spacingX - negativeSpacingX, spacingY - negativeSpacingY)
+                let colorVec = new Vector3(colors[i][j][0], colors[i][j][1], colors[i][j][2])
+                colorVecs.push(colorVec)
+                positions.push(positionVec)
+            }
+        }
+
+        this.material = new ShaderMaterial({
+            fragmentShader: `#define listLength ${colorVecs.length} \n${DiffuseShader}`,
+            vertexShader: BasicVertex,
+            uniforms: {
+                 resolution: {value: new Vector2(this.width,this.height)},
+                positions: { type: 'v2v', value: positions} as unknown as IUniform<Vector2>,
+                colors: { type: 'v3v', value: colorVecs } as unknown as IUniform<Vector3>
+            },
+            glslVersion: 1
+        });
+        (this.mesh as Mesh).material = this.material;
         return this.mesh
     }
 }
